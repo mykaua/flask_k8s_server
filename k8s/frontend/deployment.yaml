@@ -1,0 +1,74 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-nginx
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  revisionHistoryLimit: 3
+  replicas: 1
+  selector:
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: flask-nginx
+    spec:
+      serviceAccountName: flask-nginx
+      securityContext: {}
+      containers:
+        - name: flask-nginx
+          securityContext: {}
+          image: mykaua/flask-nginx
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          envFrom:
+          #          livenessProbe:
+          #            httpGet:
+          #              path: /actuator/health
+          #              port: http
+          #            initialDelaySeconds: 10
+          #            periodSeconds: 10
+          #            timeoutSeconds: 5
+          #            successThreshold: 1
+          #            failureThreshold: 5
+          #          readinessProbe:
+          #            httpGet:
+          #              path: /actuator/health
+          #              port: http
+          #            initialDelaySeconds: 10
+          #            periodSeconds: 5
+          #            timeoutSeconds: 5
+          #            successThreshold: 1
+          #            failureThreshold: 2
+          resources:
+            limits:
+              memory: 50Mi
+            requests:
+              cpu: 10m
+              memory: 50Mi
+      terminationGracePeriodSeconds: 20
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: flask-nginx
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: flask-nginx
+#      nodeSelector:
+#        nodepool: app-arm
+#      tolerations:
+#        - effect: NoSchedule
+#          key: dedicated
+#          operator: Equal
+#          value: app-arm
+
