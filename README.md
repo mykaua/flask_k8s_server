@@ -54,7 +54,7 @@ kubeclt apply -k ./
 
 ## Usage
 
-To check the website is up and running, will be used kube-portforward:
+To check the website is up and running, will be used Kube Port Forwarding:
 
 ```
 kubeclt port-forward svc/flask-nginx 8080
@@ -65,8 +65,6 @@ Open browser and check website:
 [main page](http://localhost:8080)
 [backend page](http://localhost:8080)
 
-```
-```
 
 ## Additional info:
 
